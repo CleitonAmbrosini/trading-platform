@@ -26,7 +26,7 @@ test("Should not create a user account with invalid name", async function () {
   const response = await axios.post("http://localhost:3000/signup", userData);
 
   expect(response.status).toBe(422);
-  expect(response.data).toEqual("Invalid name.");
+  expect(response.data.message).toEqual("Invalid name.");
 });
 
 test("Should not create a user account with invalid email", async function () {
@@ -40,7 +40,7 @@ test("Should not create a user account with invalid email", async function () {
   const response = await axios.post("http://localhost:3000/signup", userData);
 
   expect(response.status).toBe(422);
-  expect(response.data).toEqual("Invalid email.");
+  expect(response.data.message).toEqual("Invalid email.");
 });
 
 test("Should not create a user account with invalid document", async function () {
@@ -54,7 +54,7 @@ test("Should not create a user account with invalid document", async function ()
   const response = await axios.post("http://localhost:3000/signup", userData);
 
   expect(response.status).toBe(422);
-  expect(response.data).toEqual("Invalid CPF.");
+  expect(response.data.message).toEqual("Invalid CPF.");
 });
 
 test("Should not create a user account with invalid password", async function () {
@@ -68,7 +68,7 @@ test("Should not create a user account with invalid password", async function ()
   const response = await axios.post("http://localhost:3000/signup", userData);
 
   expect(response.status).toBe(422);
-  expect(response.data).toEqual(
+  expect(response.data.message).toEqual(
     "The password must be at least 8 characters long and include lowercase letters, uppercase letters, and numbers.",
   );
 });
