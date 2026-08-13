@@ -1,3 +1,4 @@
+import cors from "cors";
 import express, { type Request, type Response } from "express";
 import pgp from "pg-promise";
 import { validateCpf } from "./validateCPF";
@@ -7,7 +8,7 @@ const isValidName = (userName: string) => {
 };
 
 const isValidEmail = (userEmail: string) => {
-  return userEmail.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i);
+  return userEmail.match(/.+@.+\..+/);
 };
 
 const isValidPassword = (userPassword: string) => {
@@ -16,6 +17,7 @@ const isValidPassword = (userPassword: string) => {
 
 async function main() {
   const app = express();
+  app.use(cors());
   app.use(express.json());
   const connection = pgp()("postgres://postgres:123456@localhost:5435/app");
 
@@ -23,23 +25,22 @@ async function main() {
     const userData = req.body;
 
     if (!isValidName(userData.name)) {
-      return res.status(422).send("Invalid name.");
+      return res.status(422).json({ message: "Invalid name." });
     }
 
     if (!isValidEmail(userData.email)) {
-      return res.status(422).send("Invalid email.");
+      return res.status(422).json({ message: "Invalid email." });
     }
 
     if (!validateCpf(userData.document)) {
-      return res.status(422).send("Invalid CPF.");
+      return res.status(422).json({ message: "Invalid CPF." });
     }
 
     if (!isValidPassword(userData.password)) {
-      return res
-        .status(422)
-        .send(
+      return res.status(422).json({
+        message:
           "The password must be at least 8 characters long and include lowercase letters, uppercase letters, and numbers.",
-        );
+      });
     }
 
     const accountId = crypto.randomUUID();
@@ -51,7 +52,7 @@ async function main() {
       password: req.body.password,
     };
     await connection.query(
-      "insert into cca.account (account_id, name, email, document, password) values ($1, $2, $3, $4, $5)",
+      "insert into ccca.account (account_id, name, email, document, password) values ($1, $2, $3, $4, $5)",
       [
         account.accountId,
         account.name,
@@ -60,18 +61,18 @@ async function main() {
         account.password,
       ],
     );
-    res.json(accountId);
+    res.json({ accountId });
   });
 
   app.get("/accounts/:accountId", async (req: Request, res: Response) => {
     const [account] = await connection.query(
-      "select * from cca.account where account_id = $1",
+      "select * from ccca.account where account_id = $1",
       [req.params.accountId],
     );
     if (!account) {
-      res.status(204).send("Account not found.");
+      res.status(204).json({ message: "Account not found." });
     }
-    res.json(account);
+    res.json({ account });
   });
 
   app.listen(3000, () => {
