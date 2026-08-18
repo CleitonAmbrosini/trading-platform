@@ -7,7 +7,7 @@ test("Should create a user account", async function () {
     name: "John Doe",
     email: "john.doe@email.com.br",
     document: "665.531.800-91",
-    password: "abc123456",
+    password: "abcASD123456",
   };
 
   const response = await axios.post("http://localhost:3000/signup", userData);
