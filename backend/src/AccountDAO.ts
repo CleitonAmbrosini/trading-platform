@@ -1,8 +1,9 @@
 import pgp from "pg-promise";
+import type { UserAccount } from "./types";
 
 export interface AccountDAO {
   saveAccount(account: any): Promise<void | Error>;
-  getAccount(accountID: string): Promise<string | Error>;
+  getAccount(accountID: string): Promise<UserAccount | Error>;
 }
 
 export class AccountDAODatabase implements AccountDAO {

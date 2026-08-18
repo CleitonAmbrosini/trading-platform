@@ -3,6 +3,7 @@ import express, { type Request, type Response } from "express";
 import { AccountDAODatabase } from "./AccountDAO";
 import { Account } from "./accountService";
 import { Deposit } from "./depositService";
+import { Withdraw } from "./withdrawServices";
 
 async function main() {
   const app = express();
@@ -25,7 +26,7 @@ async function main() {
     const accountDatabase = new AccountDAODatabase();
 
     try {
-      const account = accountDatabase.getAccount(
+      const account = await accountDatabase.getAccount(
         req.params.accountId as string,
       );
       res.json({ account });
@@ -40,6 +41,22 @@ async function main() {
 
     try {
       const result = await newDeposit.deposit(depositData);
+      res.json(result);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(422).json({ message: error.message });
+      } else {
+        res.status(422).json({ message: "An unknown error occurred." });
+      }
+    }
+  });
+
+  app.post("/withdraw", async (req: Request, res: Response) => {
+    const withdrawData = req.body;
+    const newWithdraw = new Withdraw();
+
+    try {
+      const result = await newWithdraw.withdraw(withdrawData);
       res.json(result);
     } catch (error) {
       if (error instanceof Error) {

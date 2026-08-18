@@ -7,5 +7,7 @@ create table ccca.account (
     name text,
     email text,
     document text,
-    password text
+    password text,
+    ammount_btc numeric,
+    ammount_usd numeric,
 );

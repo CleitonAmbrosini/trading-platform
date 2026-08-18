@@ -20,9 +20,6 @@ export class Deposit {
 
     if (depositData.asset === "USD") {
       const currentUSD = await this.depositDAO.getUSD(depositData.accountId);
-      if (typeof currentUSD === "string") {
-        return { message: currentUSD };
-      }
       const newUSDAmmount = depositData.value + Number(currentUSD);
       await this.depositDAO.saveUSD(newUSDAmmount, depositData.accountId);
     }
